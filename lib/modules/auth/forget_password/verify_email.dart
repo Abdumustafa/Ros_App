@@ -41,10 +41,11 @@ class _VerifyEmailState extends State<VerifyEmail> {
   Widget build(BuildContext context) {
     var provider = Provider.of<AppProvider>(context);
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0.0,
           leading: IconButton(
               onPressed: () {
                 Navigator.pushNamed(context, LoginScreen.routeName);
@@ -100,29 +101,20 @@ class _VerifyEmailState extends State<VerifyEmail> {
                               keyboardType: TextInputType.emailAddress,
                               hintText: "Enter your email",
                               controller: provider.verifyEmailController,
-                              suffixIcon: provider.hasError
-                                  ? Icon(
-                                      Icons.error,
-                                      color: Colors.red,
-                                    )
-                                  : Icon(
-                                      Icons.email,
-                                      color: secondryColor,
-                                      size: 20,
-                                    ),
+                              suffixIcon: const Icon(
+                                Icons.email,
+                                color: secondryColor,
+                                size: 20,
+                              ),
                               obscureText: false,
                               validator: (text) {
                                 if (text == null || text.trim().isEmpty) {
-                                  provider.showSuffixIconInError(
-                                      ishasError: true);
                                   return 'Email must not be empty. Please try again.';
                                 }
                                 final emailRegExp = RegExp(
                                     r"^(?=\S)([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$");
 
                                 if (!emailRegExp.hasMatch(text)) {
-                                  provider.showSuffixIconInError(
-                                      ishasError: true);
                                   return "Please enter a valid email address (example@mail.com).";
                                 }
                                 return null;
@@ -137,30 +129,25 @@ class _VerifyEmailState extends State<VerifyEmail> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          // Show loading indicator
-                          return const Center(
-                              child: CircularProgressIndicator(
-                                  color: primaryColor));
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12.0, horizontal: 24.0),
+                            child: authButtonLoadingWidget(),
+                          );
                         } else if (snapshot.hasError) {
-                          // Show error message
                           return Center(
                             child: Text("error"),
                           );
                         } else if (snapshot.hasData) {
                           final response = snapshot.data!;
                           if (response.statusCode == 200) {
-                            // Navigate to OTP screen after a delay
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              Navigator.pushNamed(context, OtpScreen.routeName,
-                                  arguments:
-                                      provider.verifyEmailController.text);
-                            });
+                            Navigator.pushNamed(context, OtpScreen.routeName,
+                                arguments: provider.verifyEmailController.text);
                           }
                         }
 
-                        // Default UI (login form)
                         return Padding(
-                          padding: const EdgeInsets.all(11),
+                          padding: const EdgeInsets.all(14),
                           child: CustomButton(
                             buttonText: "Send Email",
                             onPressed: () => _verifyEmail(

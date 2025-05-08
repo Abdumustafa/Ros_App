@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:graduation_project/feature/comunity_screen/ui/screen/opacity_welcom_screen.dart';
 import 'package:graduation_project/modules/screens/scan/scan_details.dart';
 import 'package:graduation_project/shared/network/local/cached_data.dart';
 import 'package:graduation_project/shared/network/remote/api_manager.dart';
 import 'package:graduation_project/shared/utils/colors.dart';
 import 'package:graduation_project/shared/utils/dialogs.dart';
 import 'package:graduation_project/widgets/message/messages_methods.dart';
+import 'package:graduation_project/widgets/scan_animation.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ScanScreen extends StatefulWidget {
@@ -18,6 +20,13 @@ class ScanScreen extends StatefulWidget {
 }
 
 class _ScanScreenState extends State<ScanScreen> {
+  bool showOverlay = true;
+  void hideOverlay() {
+    setState(() {
+      showOverlay = false;
+    });
+  }
+
   Future<void> _pickAndUploadImage(ImageSource source) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: source);
@@ -25,7 +34,7 @@ class _ScanScreenState extends State<ScanScreen> {
     if (image != null && mounted) {
       String token = CachedData.getFromCache("token");
 
-      showLoading(context);
+    progressDialog(context);
 
       try {
         final response = await ApiManager.postScan(
@@ -89,9 +98,12 @@ class _ScanScreenState extends State<ScanScreen> {
   @override
   Widget build(BuildContext context) {
     String token = CachedData.getFromCache("token");
-    return Scaffold(
-        backgroundColor: Colors.white,
+    return Stack(children: [
+      Scaffold(
+        backgroundColor:  Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
+             surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0.0,
           automaticallyImplyLeading: true,
           leading: IconButton(
             icon: const Icon(
@@ -105,142 +117,155 @@ class _ScanScreenState extends State<ScanScreen> {
           centerTitle: true,
           elevation: 0.0,
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "Your kidney scan must be a CT scan",
-                style: GoogleFonts.merriweather(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 10,
-                    color: Colors.black),
-              ),
-              const SizedBox(
-                height: 24,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () => _pickAndUploadImage(ImageSource.gallery),
-                    child: _buildScanButton(
-                      buttonColor: const Color(0xFFD0EDFB),
-                      buttonIcon: Icons.upload_file_rounded,
-                      iconColor: const Color(0xFF2DC0FF),
-                      textButton: "Upload file",
+        body: showOverlay
+            ? const SizedBox.shrink()
+            : Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Your kidney scan must be a CT scan",
+                      style: GoogleFonts.merriweather(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                          color: Colors.black),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 40,
-                  ),
-                  GestureDetector(
-                    onTap: () => _pickAndUploadImage(ImageSource.gallery),
-                    child: _buildScanButton(
-                      buttonColor: const Color(0xFFF2F2FE),
-                      buttonIcon: Icons.photo_rounded,
-                      iconColor: const Color(0xFF5A6CF3),
-                      textButton: "Upload image",
+                    const SizedBox(
+                      height: 24,
                     ),
-                  ),
-                  const SizedBox(
-                    width: 40,
-                  ),
-                  GestureDetector(
-                    onTap: () => _pickAndUploadImage(ImageSource.camera),
-                    child: _buildScanButton(
-                      buttonColor: const Color(0xFFFFF1F1),
-                      buttonIcon: Icons.camera_alt,
-                      iconColor: const Color(0xFFF08F5F),
-                      textButton: "Take photo",
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  "Your recent scans",
-                  style: GoogleFonts.merriweather(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.black),
-                ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              FutureBuilder(
-                future: ApiManager.getScanResultsHistory(token),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                        heightFactor: 14,
-                        child: CircularProgressIndicator(
-                          color: primaryColor,
-                          strokeCap: StrokeCap.round,
-                          strokeWidth: 6,
-                        ));
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text(snapshot.error.toString()));
-                  }
-                  final scanResult = snapshot.data?.results ?? [];
-                  final recentScanResult = scanResult.take(6).toList();
-                  if (scanResult.isEmpty) {
-                    return Column(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        GestureDetector(
+                          onTap: () => _pickAndUploadImage(ImageSource.gallery),
+                          child: _buildScanButton(
+                            buttonColor: const Color(0xFFD0EDFB),
+                            buttonIcon: Icons.upload_file_rounded,
+                            iconColor: const Color(0xFF2DC0FF),
+                            textButton: "Upload file",
+                          ),
+                        ),
                         const SizedBox(
-                          height: 100,
+                          width: 40,
                         ),
-                        Image.asset(
-                          "assets/images/history.png",
-                          scale: 4,
+                        GestureDetector(
+                          onTap: () => _pickAndUploadImage(ImageSource.gallery),
+                          child: _buildScanButton(
+                            buttonColor: const Color(0xFFF2F2FE),
+                            buttonIcon: Icons.photo_rounded,
+                            iconColor: const Color(0xFF5A6CF3),
+                            textButton: "Upload image",
+                          ),
                         ),
                         const SizedBox(
-                          height: 15,
+                          width: 40,
                         ),
-                        Text(
-                          "No recent scans yet",
-                          style: GoogleFonts.merriweather(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                        GestureDetector(
+                          onTap: () => _pickAndUploadImage(ImageSource.camera),
+                          child: _buildScanButton(
+                            buttonColor: const Color(0xFFFFF1F1),
+                            buttonIcon: Icons.camera_alt,
+                            iconColor: const Color(0xFFF08F5F),
+                            textButton: "Take photo",
+                          ),
                         ),
                       ],
-                    );
-                  }
-                  return Expanded(
-                    child: ListView.separated(
-                      physics: const BouncingScrollPhysics(),
-                      itemBuilder: (context, index) => GestureDetector(
-                        onTap: () { 
-                          // Navigator.pushNamed(
-                          //   context,
-                             // ScanDetails.routeName,
-                          //   arguments: recentScanResult[index].scanId,
-                          // );
-                        },
-                        child: buildRecentScanWidget(
-                          context,
-                          dateOfResult:
-                              recentScanResult[index].createdAt.toString(),
-                          scanResultImage:
-                              recentScanResult[index].scanFile?.url ?? "",
-                        ),
-                      ),
-                      separatorBuilder: (context, index) => const SizedBox(
-                        height: 5,
-                      ),
-                      itemCount: recentScanResult.length,
                     ),
-                  );
-                },
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "Your recent scans",
+                        style: GoogleFonts.merriweather(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    FutureBuilder(
+                      future: ApiManager.getScanResultsHistory(token),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              heightFactor: 14,
+                              child: CircularProgressIndicator(
+                                color: primaryColor,
+                                strokeCap: StrokeCap.round,
+                                strokeWidth: 6,
+                              ));
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text(snapshot.error.toString()));
+                        }
+                        final scanResult = snapshot.data?.results ?? [];
+                        final recentScanResult = scanResult.take(6).toList();
+                        if (scanResult.isEmpty) {
+                          return Column(
+                            children: [
+                              const SizedBox(
+                                height: 100,
+                              ),
+                              Image.asset(
+                                "assets/images/empty_scan.png",
+                                scale: 4,
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Text(
+                                "No recent scans yet",
+                                style: GoogleFonts.merriweather(
+                                    color: Colors.black.withOpacity(0.4),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          );
+                        }
+                        return Expanded(
+                          child: ListView.separated(
+                            physics: const BouncingScrollPhysics(),
+                            itemBuilder: (context, index) => GestureDetector(
+                              onTap: () {
+                                // Navigator.pushNamed(
+                                //   context,
+                                //   ScanDetails.routeName,
+                                //   arguments: recentScanResult[index].scanId,
+                                // );
+                              },
+                              child: buildRecentScanWidget(
+                                context,
+                                dateOfResult: recentScanResult[index]
+                                    .createdAt
+                                    .toString(),
+                                scanResultImage:
+                                    recentScanResult[index].scanFile?.url ?? "",
+                              ),
+                            ),
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(
+                              height: 5,
+                            ),
+                            itemCount: recentScanResult.length,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ));
+      ),
+      if (showOverlay)
+        Positioned.fill(
+          child: OpacityWelcomScreen(onClose: hideOverlay),
+        ),
+    ]);
   }
 
   Widget buildRecentScanWidget(BuildContext context,

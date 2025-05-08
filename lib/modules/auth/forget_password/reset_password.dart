@@ -7,6 +7,7 @@ import 'package:graduation_project/modules/auth/login/login.dart';
 import 'package:graduation_project/shared/utils/colors.dart';
 import 'package:graduation_project/widgets/components.dart';
 import 'package:graduation_project/widgets/custom_button.dart';
+import 'package:graduation_project/widgets/message/messages_methods.dart';
 import 'package:graduation_project/widgets/text_field.dart';
 import 'package:provider/provider.dart';
 
@@ -70,9 +71,11 @@ class _ResetPasswordState extends State<ResetPassword> {
   Widget build(BuildContext context) {
     var provider = Provider.of<AppProvider>(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0.0,
         leading: IconButton(
             onPressed: () {
               Navigator.pushNamed(context, OtpScreen.routeName);
@@ -201,8 +204,10 @@ class _ResetPasswordState extends State<ResetPassword> {
                 future: _resetPasswordFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(color: primaryColor),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12.0, horizontal: 24.0),
+                      child: authButtonLoadingWidget(),
                     );
                   } else if (snapshot.hasError) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -226,61 +231,25 @@ class _ResetPasswordState extends State<ResetPassword> {
 
                     if (response.statusCode == 200 && data["success"] == true) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text(
-                                "You have reset your password Successfuly!"),
-                            content:
-                                const Text("you can use the new password now"),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const LoginScreen(),
-                                    ),
-                                  );
-                                },
-                                child: const Text("OK"),
-                              ),
-                            ],
+                        showSuccessMessage(
+                            context, "Your password has been reset");
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const LoginScreen(),
                           ),
                         );
                       });
                     } else {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text("reset password"),
-                            content: Text(
-                              data["message"] ?? "Unknown error occurred",
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const LoginScreen(),
-                                    ),
-                                  );
-                                },
-                                child: const Text("OK"),
-                              ),
-                            ],
-                          ),
-                        );
+                        showErrorMessage(
+                            context, data["message"] ?? "Something Went Wrong");
                       });
                     }
                   }
 
                   return Padding(
-                    padding: const EdgeInsets.all(11),
+                    padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
                     child: CustomButton(
                       buttonText: "Reset Password",
                       onPressed: () => _ResetPassword(context: context),

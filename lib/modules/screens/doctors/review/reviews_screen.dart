@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -43,7 +45,7 @@ class _UserReviewsScreenState extends State<UserReviewsScreen> {
 
     if (response != null && response.data["success"] == true) {
       showSuccessMessage(context, "Review deleted successfully");
-   
+
       setState(() {
         _myReviewFuture = ApiManager.getMyReviewForDoctor(token, reviewId);
         Navigator.pop(context);
@@ -54,8 +56,10 @@ class _UserReviewsScreenState extends State<UserReviewsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0.0,
         automaticallyImplyLeading: true,
         leading: IconButton(
           icon: const Icon(
@@ -116,6 +120,7 @@ class _UserReviewsScreenState extends State<UserReviewsScreen> {
                   const SizedBox(height: 10),
                   Text(
                     'You have not reviewed this doctor yet',
+                    textAlign:  TextAlign.center,
                     style: GoogleFonts.merriweather(
                       color: const Color(0xFF606770),
                       fontWeight: FontWeight.w400,
@@ -218,21 +223,14 @@ class _UserReviewsScreenState extends State<UserReviewsScreen> {
                         const Spacer(),
                         IconButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, EditReview.routeName);
-                          },
-                          icon: const Icon(
-                            Icons.edit,
-                            size: 22,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {
                             warningDialog(
                               context,
                               "Are you sure you want to delete",
                               "Yes",
                               () {
-                                clearReview(context, reviews?.id.toString() ?? "");
+                                clearReview(
+                                    context, reviews?.id.toString() ?? "");
+                  
                               },
                             );
                           },

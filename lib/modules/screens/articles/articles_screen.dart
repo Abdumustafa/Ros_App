@@ -28,8 +28,10 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
+          surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0.0,
           automaticallyImplyLeading: true,
           leading: IconButton(
             icon: const Icon(
@@ -207,54 +209,60 @@ Widget articlesItem(BuildContext context,
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
+        SizedBox(
           width: 115,
           height: 105,
-          child: Image.network(articleImage),
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Image.network(articleImage)),
         ),
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                articleTitle,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.crimsonText(
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  articleTitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.crimsonText(
                     color: Colors.black.withOpacity(0.5),
                     fontSize: 16,
-                    fontWeight: FontWeight.normal),
-              ),
-              const SizedBox(
-                height: 22,
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(articleDate,
-                    style: GoogleFonts.crimsonText(
-                      color: const Color(0xFF8E8E93),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                    )),
-                const SizedBox(
-                  width: 110,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, ArticlesDetails.routeName,
-                        arguments: articleId);
-                  },
-                  child: Text("Read now",
+                const SizedBox(height: 22),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      articleDate,
                       style: GoogleFonts.crimsonText(
-                        color: const Color(0xFF2F79E8),
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                      )),
-                ),
-              ])
-            ],
+                        color: const Color(0xFF8E8E93),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, ArticlesDetails.routeName,
+                            arguments: articleId);
+                      },
+                      child: Text(
+                        "Read now",
+                        style: GoogleFonts.crimsonText(
+                          color: const Color(0xFF2F79E8),
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ],

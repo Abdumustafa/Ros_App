@@ -14,6 +14,7 @@ import 'package:graduation_project/models/user_review.dart';
 import 'package:graduation_project/shared/utils/constants.dart';
 import 'package:graduation_project/shared/utils/dialogs.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:graduation_project/widgets/message/messages_methods.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http_parser/http_parser.dart';
 
@@ -467,6 +468,68 @@ class ApiManager {
     }
   }
 
+  // static Future<Response?> updateDoctorReview(
+  //     {required String token,
+  //     required String comment,
+  //     required double rating,
+  //     required String reviewId,
+  //     required BuildContext context}) async {
+  //   try {
+  //     final response = await _dio.patch(
+  //       "${Constants.baseUrl}/review/update/$reviewId",
+  //       data: {
+  //         "comment": comment,
+  //         "rating": rating,
+  //       },
+  //       options: Options(
+  //         headers: {
+  //           "token": "TOKEN__$token",
+  //         },
+  //       ),
+  //     );
+
+  //     if (response.data["success"] != true) {
+  //       throw DioException(
+  //         requestOptions: response.requestOptions,
+  //         response: response,
+  //         error: response.data["message"] ?? "update review failed",
+  //       );
+  //     }
+
+  //     return response;
+  //   } on DioException catch (e) {
+  //     print(e.message);
+  //     return null;
+  //   }
+  // }
+
+  static Future<Response?> updateProfile(
+      {required String token, required BuildContext context}) async {
+    try {
+      final response = await _dio.post(
+        "${Constants.baseUrl}/user/updateProfile",
+        options: Options(
+          headers: {
+            "token": "TOKEN__$token",
+          },
+        ),
+      );
+
+      if (response.data["success"] != true) {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data["message"] ?? "update profile failed",
+        );
+      }
+
+      return response;
+    } on DioException catch (e) {
+      print(e.message);
+      return null;
+    }
+  }
+
   static Future<UserReviewModel> getUserReview(String token) async {
     try {
       final response = await _dio.get("${Constants.baseUrl}/review/userReviews",
@@ -604,13 +667,30 @@ class ApiManager {
 
       return response;
     } on DioException catch (e) {
+      String errorMessage = "An error occurred.";
+
+      if (e.response != null) {
+        final statusCode = e.response?.statusCode;
+        final errorData = e.response?.data;
+
+        if (statusCode == 400) {
+          errorMessage = errorData?["message"] ?? "Invalid request.";
+        } else {
+          errorMessage = e.message ?? "An error occurred.";
+        }
+      } else {
+        errorMessage = e.message ?? "Network error. Please try again.";
+      }
+
       if (context.mounted) {
-        showError(context, e.message ?? "An error occurred");
+        showErrorMessage(context, errorMessage);
       }
       return null;
     } catch (e) {
+      String errorMessage = "Error uploading image: ${e.toString()}";
+
       if (context.mounted) {
-        showError(context, "Error uploading image: ${e.toString()}");
+        showErrorMessage(context, errorMessage);
       }
       return null;
     }

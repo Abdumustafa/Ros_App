@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graduation_project/models/doctors_details_model.dart';
@@ -21,11 +23,10 @@ class DoctorsDetails extends StatefulWidget {
 }
 
 class _DoctorsDetailsState extends State<DoctorsDetails> {
-  
   late Future<DoctorsDetailsModel> _doctorsDetailsFuture;
   late Future<UserReviewModel> _getAllReviewsFuture;
   List<UserReview.UserReviewModel>? reviews;
-  
+
   late String doctorId;
   final reviewFormKey = GlobalKey<FormState>();
   bool _isSubmittingReview = false;
@@ -38,67 +39,69 @@ class _DoctorsDetailsState extends State<DoctorsDetails> {
   }
 
   final TextEditingController reviewController = TextEditingController();
- Future<UserModel> userDataFuture(){
-  String token = CachedData.getFromCache("token");
-  return ApiManager.getUserData(token);
- }
- void _addReview(BuildContext context, double rating) async {
-  if (!reviewFormKey.currentState!.validate()) return;
-
-  if (_isSubmittingReview) return; 
-
-  if (rating == 0) {
-    showErrorMessage(context, "Please add your rating");
-    return;
+  Future<UserModel> userDataFuture() {
+    String token = CachedData.getFromCache("token");
+    return ApiManager.getUserData(token);
   }
 
-  final String review = reviewController.text.trim();
-  String token = CachedData.getFromCache("token");
+  void _addReview(BuildContext context, double rating) async {
+    if (!reviewFormKey.currentState!.validate()) return;
 
-  if (token.isEmpty) {
-    showErrorMessage(context, "Authentication error. Please log in again.");
-    return;
-  }
+    if (_isSubmittingReview) return;
 
-  setState(() {
-    _isSubmittingReview = true;
-  });
+    if (rating == 0) {
+      showErrorMessage(context, "Please add your rating.");
+      return;
+    }
 
-  try {
-    final response = await ApiManager.addDoctorReview(
-      token: token,
-      comment: review,
-      rating: rating,
-      doctorId: doctorId,
-      context: context,
-    );
+    final String review = reviewController.text.trim();
+    String token = CachedData.getFromCache("token");
 
-    if (response != null && response.data?["success"] == true) {
-      showSuccessMessage(context, "Review added successfully");
-      reviewController.clear();
-      _updateRating(0);
+    if (token.isEmpty) {
+      showErrorMessage(context, "Authentication error. Please log in again.");
 
-      setState(() {
-        _getAllReviewsFuture = ApiManager.getAllReviews(doctorId);
-      });
-    } else {
+      return;
+    }
+
+    setState(() {
+      _isSubmittingReview = true;
+    });
+
+    try {
+      final response = await ApiManager.addDoctorReview(
+        token: token,
+        comment: review,
+        rating: rating,
+        doctorId: doctorId,
+        context: context,
+      );
+
+      if (response != null && response.data?["success"] == true) {
+        //!added
+        showSuccessMessage(context, "Review added successfully!");
+        reviewController.clear();
+        _updateRating(0);
+
+        setState(() {
+          _getAllReviewsFuture = ApiManager.getAllReviews(doctorId);
+        });
+      } else {
+        showErrorMessage(
+            context,
+            response?.data?["message"] ??
+                "your review is already exist");
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(response?.data?["message"] ??
-            "Failed to add review. You have already reviewed this doctor."),
+        content: Text("An unexpected error occurred: $e"),
         backgroundColor: Colors.red,
       ));
+    } finally {
+      setState(() {
+        _isSubmittingReview = false;
+      });
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("An unexpected error occurred: $e"),
-      backgroundColor: Colors.red,
-    ));
-  } finally {
-    setState(() {
-      _isSubmittingReview = false; 
-    });
   }
-}
 
   @override
   void didChangeDependencies() {
@@ -111,8 +114,10 @@ class _DoctorsDetailsState extends State<DoctorsDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white54,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0.0,
         automaticallyImplyLeading: true,
         leading: IconButton(
           icon: const Icon(

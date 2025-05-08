@@ -62,6 +62,9 @@ dependencies:
   smooth_star_rating_null_safety: ^1.0.4+2
   url_launcher: ^6.3.1
   uuid: ^4.5.1
+  flutter_screenutil: ^5.9.3
+  get: ^4.7.2
+
   # http_parser: ^4.0.2 # Added for MediaType
 
 dev_dependencies:
@@ -91,10 +94,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Merriweather
+      fonts:
+        - asset: assets/fonts/Merriweather-VariableFont_opsz,wdth,wght.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

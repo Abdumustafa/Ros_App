@@ -19,26 +19,19 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final bool isHidden = true;
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _updatedEmailController = TextEditingController();
-
-  final TextEditingController _oldPasswordController = TextEditingController();
-
-  final TextEditingController _newPasswordController = TextEditingController();
-
-  final TextEditingController _confirmNewPasswordController =
-      TextEditingController();
+  final TextEditingController _updatedNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<AppProvider>(context);
     String token = CachedData.getFromCache("token");
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0.0,
         automaticallyImplyLeading: true,
         leading: IconButton(
           icon: const Icon(
@@ -52,7 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
         centerTitle: true,
         elevation: 0.0,
         title: Text(
-          "Profile",
+          "Edit Profile",
           style: GoogleFonts.merriweather(
               fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
         ),
@@ -112,127 +105,29 @@ class _ProfilePageState extends State<ProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        headTitlesOfTextField("Email"),
+                        headTitlesOfTextField("Name"),
                         CustomTextFormField(
-                          hintText: "Enter your email",
-                          keyboardType: TextInputType.emailAddress,
+                          keyboardType: TextInputType.name,
+                          suffixIcon: const Icon(
+                            Icons.person_pin_rounded,
+                            color: secondryColor,
+                            size: 20,
+                          ),
+                          hintText: "Enter your name",
                           obscureText: false,
-                          controller: _updatedEmailController,
-                          suffixIcon: provider.hasError
-                              ? const Icon(Icons.error, color: Colors.red)
-                              : const Icon(Icons.email,
-                                  color: secondryColor, size: 20),
+                          controller: _updatedNameController,
                           validator: (text) {
                             if (text == null || text.trim().isEmpty) {
-                              return 'Email must not be empty. Please try again.';
-                            }
-                            final emailRegExp = RegExp(
-                                r"^(?=\S)([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$");
-                            if (!emailRegExp.hasMatch(text)) {
-                              provider.showSuffixIconInError(ishasError: true);
-                              return "Please enter a valid email address (example@mail.com).";
+                              return 'Name must not be empty. Please try again.';
                             }
                             return null;
                           },
                         ),
-                        const SizedBox(height: 30),
-                        headTitlesOfTextField("Old Password"),
-                        CustomTextFormField(
-                          keyboardType: TextInputType.text,
-                          hintText: "Enter old password",
-                          controller: _oldPasswordController,
-                          obscureText: provider.isHidden,
-                          suffixIcon: IconButton(
-                            onPressed: () =>
-                                provider.toggleObscureText(provider.isHidden),
-                            icon: provider.isHidden
-                                ? const Icon(Icons.visibility_outlined,
-                                    color: secondryColor, size: 20)
-                                : const Icon(Icons.visibility_off_outlined,
-                                    color: secondryColor, size: 20),
-                          ),
-                          validator: (text) {
-                            if (text == null || text.trim().isEmpty) {
-                              return 'Password must not be empty. Please try again.';
-                            }
-                            if (text.length < 8) {
-                              return 'Password should be at least 8 characters.';
-                            }
-                            final passwordRegExp = RegExp(
-                                r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\\$&*~]).{8,}\$');
-                            if (!passwordRegExp.hasMatch(text)) {
-                              return "Password must contain at least 8 characters - 1 uppercase letter, 1 lowercase\n1 number, and 1 symbol.";
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 30),
-                        headTitlesOfTextField("New Password"),
-                        CustomTextFormField(
-                          keyboardType: TextInputType.text,
-                          hintText: "Enter new password",
-                          controller: _newPasswordController,
-                          obscureText: provider.isHidden,
-                          suffixIcon: IconButton(
-                            onPressed: () =>
-                                provider.toggleObscureText(provider.isHidden),
-                            icon: provider.isHidden
-                                ? const Icon(Icons.visibility_outlined,
-                                    color: secondryColor, size: 20)
-                                : const Icon(Icons.visibility_off_outlined,
-                                    color: secondryColor, size: 20),
-                          ),
-                          validator: (text) {
-                            if (text == null || text.trim().isEmpty) {
-                              return 'Password must not be empty. Please try again.';
-                            }
-                            if (text.length < 8) {
-                              return 'Password should be at least 8 characters.';
-                            }
-                            final passwordRegExp = RegExp(
-                                r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\\$&*~]).{8,}\$');
-                            if (!passwordRegExp.hasMatch(text)) {
-                              return "Password must contain at least 8 characters - 1 uppercase letter, 1 lowercase\n1 number, and 1 symbol.";
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 30),
-                        headTitlesOfTextField("Confirm Password"),
-                        CustomTextFormField(
-                          keyboardType: TextInputType.text,
-                          hintText: "Enter confirm password",
-                          controller: _confirmNewPasswordController,
-                          obscureText: provider.isHidden,
-                          suffixIcon: IconButton(
-                            onPressed: () =>
-                                provider.toggleObscureText(provider.isHidden),
-                            icon: provider.isHidden
-                                ? const Icon(Icons.visibility_outlined,
-                                    color: secondryColor, size: 20)
-                                : const Icon(Icons.visibility_off_outlined,
-                                    color: secondryColor, size: 20),
-                          ),
-                          validator: (text) {
-                            if (text == null || text.trim().isEmpty) {
-                              return 'Invalid password. Follow the rules.';
-                            }
-                            if (text != _newPasswordController.text) {
-                              return 'Passwords do not match. Please try again.';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 30),
-                        CustomButton(
-                          buttonText: "Update",
-                          onPressed: () {
-                            if (!_formKey.currentState!.validate()) return;
-                          },
-                        )
                       ],
                     ),
                   ),
+                  const SizedBox(height: 70),
+                  CustomButton(buttonText: "Update", onPressed: () {})
                 ],
               ),
             ),

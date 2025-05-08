@@ -13,7 +13,9 @@ class History extends StatelessWidget {
     String token = CachedData.getFromCache("token");
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0.0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         centerTitle: true,
         title: Text(
           "Scan Results History",
@@ -48,7 +50,7 @@ class History extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Image.asset(
-                      "assets/images/history.png",
+                      "assets/images/empty_scan.png",
                       scale: 5,
                     ),
                     const SizedBox(height: 15),
@@ -56,7 +58,7 @@ class History extends StatelessWidget {
                       textAlign: TextAlign.center,
                       'There is no history yet',
                       style: GoogleFonts.crimsonText(
-                        color: Colors.black,
+                        color: Colors.black.withOpacity(0.4),
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
                       ),
@@ -72,14 +74,15 @@ class History extends StatelessWidget {
               onTap: () {
                 // Navigator.pushNamed(
                 //   context,
-                //   // ScanDetails.routeName,
+                //   ScanDetails.routeName,
                 //   arguments: scanResult[index].scanId,
                 // );
               },
               child: buildResultsHistoryWidget(
                 context,
                 dateOfResult: scanResult[index].createdAt.toString(),
-                scanResultImage: scanResult[index].scanFile?.url.toString() ?? "",
+                scanResultImage:
+                    scanResult[index].scanFile?.url.toString() ?? "",
               ),
             ),
             separatorBuilder: (context, index) => const SizedBox(

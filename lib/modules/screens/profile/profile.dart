@@ -33,6 +33,7 @@ class Profile extends StatelessWidget {
     String token = CachedData.getFromCache("token");
     try {
       print("Sending token: $token");
+      showLoadingDialog(context);
       Response? response =
           await ApiManager.logOut(context: context, token: token);
       //! print("API response: ${response?.data}"); //? For debugging
@@ -51,6 +52,7 @@ class Profile extends StatelessWidget {
 
   void clearAccount(BuildContext context) async {
     String token = CachedData.getFromCache("token");
+    showLoadingDialog(context);
     try {
       Response? response =
           await ApiManager.deleteAccount(context: context, token: token);

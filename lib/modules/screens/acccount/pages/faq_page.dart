@@ -25,8 +25,10 @@ class FaqPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor:  Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
+           surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0.0,
         automaticallyImplyLeading: true,
           leading: IconButton(
             icon: const Icon(

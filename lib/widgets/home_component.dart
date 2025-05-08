@@ -85,6 +85,7 @@ Widget doctorhomeWidget(
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
               doctorName,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.merriweather(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,

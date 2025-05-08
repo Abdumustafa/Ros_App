@@ -30,9 +30,7 @@ Widget doctorsItem(
               children: [
                 CircleAvatar(
                   radius: 30.0,
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20.0),
-                      child: Image.network(image)),
+                  backgroundImage: NetworkImage(image),
                 ),
                 const SizedBox(
                   width: 22.0,
@@ -45,17 +43,17 @@ Widget doctorsItem(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         )),
-                    
                     Text(
                       // address.length > 14 ? '${address.substring(0, 14)}...' : address,
                       address,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.crimsonText(
                         color: Colors.black.withOpacity(0.5),
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
-                      overflow: TextOverflow.ellipsis, //! Note : if the address is too long, it will be truncated with an ellipsis
-                      maxLines: 1,
+                   
                     ),
                   ],
                 ),

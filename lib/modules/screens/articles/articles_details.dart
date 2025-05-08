@@ -28,8 +28,18 @@ class _ArticlesDetailsState extends State<ArticlesDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor:  Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
+             surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0.0,
+          title: Text(
+            "Articles Details",
+            style: GoogleFonts.poppins(
+              color: Colors.black,
+              fontWeight: FontWeight.w600,
+              fontSize: 20,
+            ),
+          ),
           automaticallyImplyLeading: true,
           leading: IconButton(
             icon: const Icon(

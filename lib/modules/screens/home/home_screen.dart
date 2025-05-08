@@ -123,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor:  Theme.of(context).scaffoldBackgroundColor,
       appBar: PreferredSize(
         preferredSize: Size(screenWidth, screenHeight * 0.22),
         child: AppBar(
@@ -188,23 +188,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }),
           leadingWidth: screenWidth * 0.3,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(6.0),
-              child: IconButton(
-                icon: const Icon(
-                  Icons.dark_mode_sharp,
-                  color: Colors.white,
-                  //? For light mode  Icons.brightness_4_outlined,
-                  //* For dark mode  Icons.brightness_5_outlined,
-                ),
-                iconSize: 29,
-                onPressed: () {
-                  //! Theme Toggle
-                },
-              ),
-            )
-          ],
+          // actions: [
+          //   Padding(
+          //     padding: const EdgeInsets.all(6.0),
+          //     child: IconButton(
+          //       icon: const Icon(
+          //         Icons.dark_mode_sharp,
+          //         color: Colors.white,
+          //         //? For light mode  Icons.brightness_4_outlined,
+          //         //* For dark mode  Icons.brightness_5_outlined,
+          //       ),
+          //       iconSize: 29,
+          //       onPressed: () {
+          //         //! Theme Toggle
+          //       },
+          //     ),
+          //   )
+          // ],
         ),
       ),
       body: SingleChildScrollView(

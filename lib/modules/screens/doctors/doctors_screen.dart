@@ -26,10 +26,11 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFCFCFC),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        automaticallyImplyLeading: true,
         surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0.0,
+        automaticallyImplyLeading: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, size: 20),
           color: Colors.black,
@@ -57,7 +58,6 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                 switchAnimationConfig: const SwitchAnimationConfig(
                   switchInCurve: Curves.bounceIn,
                   switchOutCurve: Curves.easeInOutCirc,
-             
                 ),
                 enabled: true,
                 child: ListView.separated(

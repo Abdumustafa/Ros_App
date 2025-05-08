@@ -10,22 +10,20 @@ class ArticlesSearch extends SearchDelegate {
     final ThemeData theme = Theme.of(context);
     return theme.copyWith(
       appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.transparent, 
-        elevation: 0.7, 
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0.0,
+        backgroundColor: Colors.transparent,
+        elevation: 0.7,
         iconTheme: IconThemeData(color: Colors.black54),
       ),
-      
       scaffoldBackgroundColor: Colors.white,
       textTheme: GoogleFonts.crimsonTextTextTheme(
         theme.textTheme,
-
       ),
       textSelectionTheme: const TextSelectionThemeData(
         cursorColor: primaryColor,
-        
       ),
       inputDecorationTheme: InputDecorationTheme(
-        
         fillColor: Colors.transparent,
         filled: true,
         hintStyle: GoogleFonts.crimsonText(
@@ -82,6 +80,8 @@ class ArticlesSearch extends SearchDelegate {
               return const Center(
                   child: CircularProgressIndicator(
                 color: primaryColor,
+                strokeCap: StrokeCap.round,
+                strokeWidth: 6,
               ));
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));

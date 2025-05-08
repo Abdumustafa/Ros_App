@@ -156,7 +156,7 @@ void warningDialog(BuildContext context, String message, String redButtonText,
               ),
               const SizedBox(height: 27.0),
               Text(message,
-              textAlign: TextAlign.center,
+                  textAlign: TextAlign.center,
                   style: GoogleFonts.merriweather(
                       fontSize: 18,
                       color: Colors.black.withOpacity(0.5),
@@ -182,23 +182,24 @@ void warningDialog(BuildContext context, String message, String redButtonText,
                               fontWeight: FontWeight.bold))),
                 ),
                 const Spacer(),
-                Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFF3B30),
-                    borderRadius: BorderRadius.circular(10.0),
+                GestureDetector(
+                  onTap: () {
+                    redButtonFunction();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF3B30),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    alignment: Alignment.center,
+                    width: 130,
+                    height: 50,
+                    child: Text(redButtonText,
+                        style: GoogleFonts.merriweather(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold)),
                   ),
-                  alignment: Alignment.center,
-                  width: 130,
-                  height: 50,
-                  child: TextButton(
-                      onPressed: () {
-                        redButtonFunction();
-                      },
-                      child: Text(redButtonText,
-                          style: GoogleFonts.merriweather(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold))),
                 ),
               ])
             ],
@@ -267,6 +268,31 @@ void showSuccessDialog(BuildContext context, String message) {
             ),
           ),
         ],
+      );
+    },
+  );
+}
+
+void showLoadingDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Padding(
+          padding: EdgeInsets.all(16),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(color: primaryColor),
+              SizedBox(width: 16),
+              Text("Loading...", style: TextStyle(color: primaryColor)),
+            ],
+          ),
+        ),
       );
     },
   );
